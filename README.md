@@ -1,2 +1,6 @@
 # AIChallenge
-无人驾驶视觉感知项目
+[Driverless visual perception Project](https://challenger.ai/competition/adp2018)
+
+# run
+python3 main.py
+
