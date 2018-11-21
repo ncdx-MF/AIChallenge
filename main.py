@@ -10,7 +10,6 @@ from keras.callbacks import TensorBoard, ModelCheckpoint, ReduceLROnPlateau, Ear
 from keras.models import Model
 from keras.optimizers import Adam
 from keras.utils import plot_model
-#from denseyolo import DenseYolo
 from dense121_yolo_refine import DenseYolo,loss
 from keras.backend import mean
 from dataset import *
@@ -33,9 +32,9 @@ batch_size = 32
 logging = TensorBoard(log_dir=weights_path)
 checkpoint = ModelCheckpoint(log_dir + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5',
                              monitor='val_loss', save_weights_only=True,
-                             save_best_only=True, period=3)  # 只存储weights，
-reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3, verbose=1)  # 当评价指标不在提升时，减少学习率
-early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1)  # 测试集准确率，下降前终止
+                             save_best_only=True, period=3)  # only weights，
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3, verbose=1)  # learning rate reduce
+early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1) 
 ##########################################################
 
 #gpu configure
@@ -67,14 +66,14 @@ if Mode == 'train':
                                                batch_size, input_shape, 
                                                anchors, 
                                                num_classes,
-                                               seg_classe), #数据集生成器
+                                               seg_classe), # data generator
                         steps_per_epoch=max(1, 70000//batch_size),
                         validation_data=data_generator_wrapper(lines[70000:], 
                                                                batch_size, 
                                                                input_shape, 
                                                                anchors, 
                                                                num_classes,
-                                                               seg_classe),#验证集生成器
+                                                               seg_classe),#test data generator
                         alidation_steps=max(1, 10000//batch_size),
                         epochs=50,
                         initial_epoch=0,
