@@ -59,7 +59,7 @@ def DenseYolo(num_classes=10,seg_classes=2,nb_dense_block=4, growth_rate=32, nb_
     nb_filter = 64
     nb_layers = [6,12,24,16]#For DenseNet-121
 
-    ##########  Initial convolution  #############
+    ##########  Initial convolution layers#############
     x = ZeroPadding2D((3, 3), name='conv1_zeropadding')(img_input)
     x = Conv2D(nb_filter, (7, 7), strides=(2, 2), use_bias=False, name="conv1")(x)
     x = BatchNormalization(epsilon=eps, axis=concat_axis, name='conv1_bn')(x)
@@ -549,7 +549,6 @@ def box_iou(b1, b2):
 
 def yolo_head(feats, anchors, num_classes, input_shape, calc_loss=False):
     """Convert final layer features to bounding box parameters."""
-    """将最终特征图转化成bounding box的参数"""
     num_anchors = len(anchors)
     # Reshape to batch, height, width, num_anchors, box_params.
     anchors_tensor = K.reshape(K.constant(anchors), [1, 1, 1, num_anchors, 2])
@@ -566,7 +565,6 @@ def yolo_head(feats, anchors, num_classes, input_shape, calc_loss=False):
         feats, [-1, grid_shape[0], grid_shape[1], num_anchors, num_classes + 5])
 
     # Adjust preditions to each spatial grid point and anchor size.
-    # 调整预测的box的尺寸和位置
     box_xy = (K.sigmoid(feats[..., :2]) + grid) / K.cast(grid_shape[::-1], K.dtype(feats))
     box_wh = K.exp(feats[..., 2:4]) * anchors_tensor / K.cast(input_shape[::-1], K.dtype(feats))
     box_confidence = K.sigmoid(feats[..., 4:5])
